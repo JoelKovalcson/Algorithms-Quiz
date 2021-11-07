@@ -9,7 +9,7 @@
 </head>
 <body>
     <!-- High Score Nav and Time Left -->
-    <header>
+    <header class="flex-spacer">
         <a href="" class="high-score" id="high-score">
             <nav>
                 High Scores
@@ -19,17 +19,17 @@
             Time Left: <span id="time" class="time">00</span>
         </div>
     </header>
-    <section class="quiz">
+    <section class="quiz flex-spacer">
         <div id="title" class="title">
             Javascript Quiz
         </div>
         
-        <div class="content">
-            This quiz will test your knowledge on some fundamental Javascript features. When you are ready to begin click the button below.
+        <div id="content" class="content">
+            This quiz will test your knowledge on some fundamental Javascript features. You start with <span class="correct">60</span> seconds and each incorrect answer will subtract your time by <span class="incorrect">10</span> seconds. When you are ready to begin click the button below.
         </div>
 
-        <div id="buttons" class="buttons">
-            <ul>
+        <div class="buttons">
+            <ul id="buttons">
                 <li>
                     <button id="start" class="button">
                         Begin Quiz

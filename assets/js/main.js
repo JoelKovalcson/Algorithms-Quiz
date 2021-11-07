@@ -10,42 +10,60 @@ var quizStartButtonElement = document.querySelector("#start");
 // The questions used for the quiz
 var questions = [{
         question: "Question 1",
-        choices: ["a1", "a2", "a3", "a4"],
-        answer: "a4"
+        choices: ["c", "a2", "a3", "a4"],
+        answer: "c"
     },
     {
         question: "Question 2",
-        choices: ["a1", "a2", "a3", "a4"],
-        answer: "a3"
+        choices: ["c", "a2", "a3", "a4"],
+        answer: "c"
     },
     {
         question: "Question 3",
-        choices: ["a1", "a2", "a3", "a4"],
-        answer: "a1"
+        choices: ["c", "a2", "a3", "a4"],
+        answer: "c"
     },
     {
         question: "Question 4",
-        choices: ["a1", "a2", "a3", "a4"],
-        answer: "a4"
+        choices: ["c", "a2", "a3", "a4"],
+        answer: "c"
     },
     {
         question: "Question 5",
-        choices: ["a1", "a2", "a3", "a4", "a5"],
-        answer: "a5"
+        choices: ["c", "a2", "a3", "a4", "a5"],
+        answer: "c"
     },
     {
         question: "Question 6",
-        choices: ["a1", "a2", "a3"],
-        answer: "a2"
+        choices: ["c", "a2", "a3"],
+        answer: "c"
     }
 ];
 
 // Starting page text
 const startPage = {
     title: "HTML/CSS Knowledge Quiz",
-    content: "This quiz will test your knowledge on some fundamental concepts about HTML and CSS. When you are ready to begin click the button below.",
+    content: "This quiz will test your knowledge on some fundamental Javascript features. You start with <span class=\"correct\">60</span> seconds and each incorrect answer will subtract your time by <span class=\"incorrect\">10</span> seconds. When you are ready to begin click the button below.",
     button: "Begin Quiz"
 }
+
+// Quiz end text
+const quizEnd = {
+    content: "Thank you for taking the quiz! Your final score is: ",
+    defaultInput: "Enter initials"
+}
+
+// Values to store about answers during quiz
+var statistics = {
+    time: 0,
+    correct: 0,
+    incorrect: 0,
+    incorrectPenalty: 10,
+    currentQuestion: 0
+}
+
+// Variable to hold interval for updating time
+var timerInterval;
 
 // This shuffle function was obtained from Stackoverflow from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 // Included are my own comments to display knowledge of information
@@ -62,7 +80,7 @@ function shuffle(array) {
         // Decrement both for next loop and for proper indexing below
         currentIndex--;
 
-        // This is an ES6 shorthand equivalent to the following code:
+        // This is an ES6 shorthand equivalent to the following code snippet:
         /*
             var tmp = array[currentIndex];
             array[currentIndex] = array[randomIndex];
@@ -76,35 +94,137 @@ function shuffle(array) {
     return array;
 }
 
-function resetPage() {
-
+function resetQuiz() {
+    // TODO: Implement
 }
 
 function loadHighScores() {
     // TODO: Implement
 }
 
+function saveScore(event) {
+    event.preventDefault();
+    // Data validation
+    let input = document.querySelector("#input");
+    if (input.textContent == "") {
+        alert("You didn't enter your initials!"); 
+        return;
+    }
+    
+
+    // Save information to the local storage
+    
+    // Take the player to the high score page upon submitting.
+    loadHighScores();
+}
+
 function endQuiz() {
-    // TODO: Implement
+    // Clean up a few things
+    quizButtonsElement.removeEventListener('click', handleAnswer, true);
+    clearInterval(timerInterval);
+    timeElement.textContent = statistics.time;
+    updateCurrentScores();
+
+    // Create quiz score submit page
+    quizContentElement.innerHTML = quizEnd.content + "<span class=\"result\">" + statistics.time + "</span>";
+    let form = document.createElement("form");
+    let input = document.createElement("input");
+    let submit = document.createElement("button");
+    input.setAttribute("type", "text");
+    input.setAttribute("placeholder", "Enter initials");
+    input.setAttribute("id", "input");
+    submit.setAttribute("type", "submit");
+    submit.textContent = "Submit";
+    submit.classList.add("button");
+    form.appendChild(input);
+    form.appendChild(submit);
+    quizButtonsElement.innerHTML = "";
+    quizButtonsElement.appendChild(form);
+    submit.addEventListener('click', saveScore, true);
+}
+
+function handleAnswer(event) {
+    // If it's not a button exit function
+    if(event.target.nodeName != "BUTTON") {
+        return;
+    }
+    // Correct answer was chosen
+    if(event.target.textContent == questions[statistics.currentQuestion].answer) {
+        statistics.correct++;
+    }
+    // Else it was incorrect
+    else {
+        statistics.incorrect++;
+        statistics.time-=statistics.incorrectPenalty;
+    }
+    statistics.currentQuestion++;
+    nextQuestion();
+}
+
+function updateTime() {
+    statistics.time--;
+    if(statistics.time < 0) {
+        statistics.time = 0;
+        endQuiz();
+    }
+    else timeElement.textContent = statistics.time;
+}
+
+function updateCurrentScores() {
+    quizTitleElement.innerHTML = "<div class=\"flex-spacer\"><div class=\"correct\">Correct: <span>" + statistics.correct + "</span></div><div class=\"incorrect\">Incorrect: <span>" + statistics.incorrect + "</span></div></div>";
+}
+
+function setQuestionButtons() {
+    quizButtonsElement.innerHTML = "";
+    // Setup each list item and button inside of it for each choice
+    questions[statistics.currentQuestion].choices.forEach(choice => {
+        let li = document.createElement("li");
+        let button = document.createElement("button");
+        li.appendChild(button);
+        button.classList.add("button");
+        button.textContent = choice;
+        quizButtonsElement.appendChild(li);
+    });
 }
 
 function nextQuestion() {
-    // TODO: Implement
-}
-
-function startQuiz() {
-    // TODO: Implement
+    // If the last question is answered, end the quiz
+    if(statistics.currentQuestion >= questions.length) {
+        endQuiz();
+        return;
+    }
+    // Setup Title to show score
+    updateCurrentScores();
+    // Setup Content to show question
+    quizContentElement.classList.add("question");
+    quizContentElement.textContent = questions[statistics.currentQuestion].question;
+    // Setup button list to show choices
+    setQuestionButtons();
 }
 
 function beginQuiz() {
+    timeElement.parentNode.style.display = "initial";
+    highScoreElement.hidden = true;
+    statistics.time = 60;
+    statistics.currentQuestion = 0;
+    statistics.incorrect = 0;
+    statistics.correct = 0;
+    timeElement.textContent = statistics.time;
     // Shuffle the questions so they are random each time
     questions = shuffle(questions);
     // Then shuffle each choice selection
     questions.forEach(element => {
         element.choices = shuffle(element.choices);
     });
-    startQuiz();
+    quizStartButtonElement.removeEventListener('click', beginQuiz, false);
+    quizStartButtonElement = null;
+
+    timerInterval = setInterval(updateTime, 1000);
+    // Setup listen event for all buttons for the quiz
+    quizButtonsElement.addEventListener('click', handleAnswer, true);
+    nextQuestion();
 }
 
+// Initial event listeners
 highScoreElement.addEventListener('click', loadHighScores);
-quizStartButtonElement.addEventListener('click', beginQuiz);
+quizStartButtonElement.addEventListener('click', beginQuiz, false);
