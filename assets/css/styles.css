@@ -3,6 +3,7 @@
     --page-background: #303030;
     --default-text-color: #D0D0D0;
     --accent-text-color: #f56e0b;
+    --secondary-background: #505050;
 }
 
 body {
@@ -32,7 +33,7 @@ header {
 }
 
 .high-score nav:hover {
-    background-color: #505050;
+    background-color: var(--secondary-background);
 }
 
 /* Timer Display */
@@ -64,6 +65,13 @@ header {
     margin: 30px 200px;
     padding: 20px 20px;
     border-bottom: var(--default-text-color) solid thin;
+}
+
+.quiz .correct {
+    color: #00A000;
+}
+.quiz .correct span {
+    font-weight: normal;
 }
 
 .quiz .content {
@@ -99,6 +107,6 @@ header {
 .quiz .button:hover {
     border: var(--accent-text-color) solid thin;
     padding: 4px;
-    background-color: var(--page-background);
+    background-color: var(--secondary-background);
     color: var(--accent-text-color);
 }
