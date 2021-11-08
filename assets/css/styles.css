@@ -107,10 +107,22 @@ body {
 }
 
 .quiz .content ol {
-    
+    counter-reset: counter;
+    list-style: none;
 }
 .quiz .content ol li {
-    
+    counter-increment: counter;
+}
+
+.quiz .content ol li:first-of-type {
+    font-size: 50px;
+}
+
+.quiz .content ol li::before {
+    content: counter(counter)')';
+    padding-right: 15px;
+    font-size: 40px;
+    color: var(--accent-text-color);
 }
 
 /* Button List Formatting */

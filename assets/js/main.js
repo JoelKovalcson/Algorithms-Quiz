@@ -133,7 +133,7 @@ function loadHighScores() {
     let ol = document.createElement("ol");
     highScores.forEach(user => {
         let li = document.createElement("li");
-        li.textContent = user.score + " - " + user.initials;
+        li.textContent = user.score + " : " + user.initials;
         ol.appendChild(li);
     });
     quizContentElement.appendChild(ol);
@@ -251,6 +251,10 @@ function setQuestionButtons() {
 function nextQuestion() {
     // If the last question is answered, end the quiz
     if(statistics.currentQuestion >= questions.length) {
+        // Edge case in case of negative score from an incorrect question
+        if(statistics.time < 0) {
+            statistics.time = 0;
+        }
         endQuiz();
         return;
     }
