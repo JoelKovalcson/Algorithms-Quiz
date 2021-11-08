@@ -1,41 +1,41 @@
 // Header elements
-var highScoreElement = document.querySelector("#high-score");
-var timeElement = document.querySelector("#time");
+const highScoreElement = document.querySelector("#high-score");
+const timeElement = document.querySelector("#time");
 // Quiz elements
-var quizTitleElement = document.querySelector("#title");
-var quizContentElement = document.querySelector("#content");
-var quizButtonsElement = document.querySelector("#buttons");
+const quizTitleElement = document.querySelector("#title");
+const quizContentElement = document.querySelector("#content");
+const quizButtonsElement = document.querySelector("#buttons");
 var quizStartButtonElement = document.querySelector("#start");
 
 // The questions used for the quiz
 var questions = [{
-        question: "Question 1",
-        choices: ["c", "a2", "a3", "a4"],
-        answer: "c"
+        question: "Which of the following is not a data type build into Javascript?",
+        choices: ["Boolean", "Number", "String", "Null", "Integer"],
+        answer: "Integer"
     },
     {
-        question: "Question 2",
-        choices: ["c", "a2", "a3", "a4"],
-        answer: "c"
+        question: "Which of these is used to define a variable in local scope?",
+        choices: ["const", "auto", "var", "let"],
+        answer: "let"
     },
     {
-        question: "Question 3",
-        choices: ["c", "a2", "a3", "a4"],
-        answer: "c"
+        question: "What data type is 'this'?",
+        choices: ["Function", "Null", "String", "Object"],
+        answer: "Object"
     },
     {
-        question: "Question 4",
-        choices: ["c", "a2", "a3", "a4"],
-        answer: "c"
+        question: "Is JavaScript an interpreted language or a compiled language?",
+        choices: ["Interpreted", "Compiled", "Neither", "Both"],
+        answer: "Interpreted"
     },
     {
-        question: "Question 5",
-        choices: ["c", "a2", "a3", "a4", "a5"],
-        answer: "c"
+        question: "Which of the following is incorrect syntax?",
+        choices: ["a[i] = b;", "let a = 5;", "const var a = 3;", "function a(){};"],
+        answer: "const var a = 3;"
     },
     {
-        question: "Question 6",
-        choices: ["c", "a2", "a3"],
+        question: "Choose the one that is not defined in JavaScript by default in global scope.",
+        choices: ["document", "setInterval", "NaN", "addEventListener"],
         answer: "c"
     }
 ];
@@ -67,7 +67,7 @@ var highScores = [];
 // Variable to hold interval for updating time
 var timerInterval;
 
-// This shuffle function was obtained from Stackoverflow from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+// This shuffle function was obtained from StackOverflow from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 // Included are my own comments to display knowledge of information
 function shuffle(array) {
     // Initialize 'currentIndex' to the length of the array passed into the function, and initialize a variable 'randomIndex'
@@ -157,17 +157,20 @@ function saveScore(event) {
     // Data validation
     let input = document.querySelector("#input");
     if (input.value == "") {
-        alert("You didn't enter your initials!"); 
+        alert("You didn't enter your initials!");
         return;
     }
-    
+
     // Save information to the local storage
-    highScores.push({initials: input.value, score: statistics.time});
-    
+    highScores.push({
+        initials: input.value,
+        score: statistics.time
+    });
+
     // Sort array of scores so that the highest score is first
     highScores.sort((first, second) => {
-        if(first.score > second.score) return -1;
-        if(first.score < second.score) return 1;
+        if (first.score > second.score) return -1;
+        if (first.score < second.score) return 1;
         return 0;
     });
 
@@ -206,17 +209,17 @@ function endQuiz() {
 
 function handleAnswer(event) {
     // If it's not a button exit function
-    if(event.target.nodeName != "BUTTON") {
+    if (event.target.nodeName != "BUTTON") {
         return;
     }
     // Correct answer was chosen
-    if(event.target.textContent == questions[statistics.currentQuestion].answer) {
+    if (event.target.textContent == questions[statistics.currentQuestion].answer) {
         statistics.correct++;
     }
     // Else it was incorrect
     else {
         statistics.incorrect++;
-        statistics.time-=statistics.incorrectPenalty;
+        statistics.time -= statistics.incorrectPenalty;
     }
     statistics.currentQuestion++;
     nextQuestion();
@@ -224,11 +227,10 @@ function handleAnswer(event) {
 
 function updateTime() {
     statistics.time--;
-    if(statistics.time < 0) {
+    if (statistics.time < 0) {
         statistics.time = 0;
         endQuiz();
-    }
-    else timeElement.textContent = statistics.time;
+    } else timeElement.textContent = statistics.time;
 }
 
 function updateCurrentScores() {
@@ -250,9 +252,9 @@ function setQuestionButtons() {
 
 function nextQuestion() {
     // If the last question is answered, end the quiz
-    if(statistics.currentQuestion >= questions.length) {
+    if (statistics.currentQuestion >= questions.length) {
         // Edge case in case of negative score from an incorrect question
-        if(statistics.time < 0) {
+        if (statistics.time < 0) {
             statistics.time = 0;
         }
         endQuiz();
@@ -292,7 +294,7 @@ function beginQuiz() {
 
 function loadStorage() {
     highScores = JSON.parse(localStorage.getItem("highScores"));
-    if(highScores == null) highScores = [];
+    if (highScores == null) highScores = [];
 }
 
 // Initial event listeners
