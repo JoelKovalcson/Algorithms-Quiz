@@ -42,9 +42,8 @@ var questions = [{
 
 // Starting page text
 const startPage = {
-    title: "HTML/CSS Knowledge Quiz",
-    content: "This quiz will test your knowledge on some fundamental Javascript features. You start with <span class=\"correct\">60</span> seconds and each incorrect answer will subtract your time by <span class=\"incorrect\">10</span> seconds. When you are ready to begin click the button below.",
-    button: "Begin Quiz"
+    title: "Javascript Quiz",
+    content: "This quiz will test your knowledge on some fundamental Javascript features. You start with <span class=\"correct\">60</span> seconds and each incorrect answer will subtract your time by <span class=\"incorrect\">10</span> seconds. When you are ready to begin click the button below."
 }
 
 // Quiz end text
@@ -61,6 +60,9 @@ var statistics = {
     incorrectPenalty: 10,
     currentQuestion: 0
 }
+
+// Storage for high scores
+var highScores = [];
 
 // Variable to hold interval for updating time
 var timerInterval;
@@ -94,26 +96,85 @@ function shuffle(array) {
     return array;
 }
 
+function clearHighScores() {
+    highScores = [];
+    localStorage.setItem("highScores", JSON.stringify(highScores));
+    loadHighScores();
+}
+
 function resetQuiz() {
-    // TODO: Implement
+    timeElement.parentNode.style.display = "none";
+    highScoreElement.hidden = false;
+
+    quizTitleElement.textContent = startPage.title;
+
+    quizContentElement.innerHTML = startPage.content;
+
+    quizButtonsElement.innerHTML = "<li><button id=\"start\" class=\"button\">Begin Quiz</button></li>";
+    quizStartButtonElement = document.querySelector("#start");
+    quizStartButtonElement.addEventListener('click', beginQuiz, false);
 }
 
 function loadHighScores() {
     // TODO: Implement
+    timeElement.parentNode.style.display = "none";
+    highScoreElement.hidden = true;
+    // If navigated here from start page, remove initial listener.
+    if (quizStartButtonElement != null) {
+        quizStartButtonElement.removeEventListener('click', beginQuiz, false);
+        quizStartButtonElement = null;
+    }
+
+    // Setup title
+    quizTitleElement.innerHTML = "High Scores";
+    quizContentElement.innerHTML = "";
+
+    // Setup list of scores
+    let ol = document.createElement("ol");
+    highScores.forEach(user => {
+        let li = document.createElement("li");
+        li.textContent = user.score + " - " + user.initials;
+        ol.appendChild(li);
+    });
+    quizContentElement.appendChild(ol);
+
+    // Setup back button
+    let ret = document.createElement("button");
+    ret.classList.add("button");
+    ret.textContent = "Return";
+    let clear = document.createElement("button");
+    clear.classList.add("button");
+    clear.textContent = "Clear High Scores";
+    quizButtonsElement.innerHTML = "";
+    quizButtonsElement.appendChild(ret);
+    quizButtonsElement.appendChild(clear);
+    ret.addEventListener('click', resetQuiz, true);
+    clear.addEventListener('click', clearHighScores, true);
 }
 
 function saveScore(event) {
     event.preventDefault();
     // Data validation
     let input = document.querySelector("#input");
-    if (input.textContent == "") {
+    if (input.value == "") {
         alert("You didn't enter your initials!"); 
         return;
     }
     
-
     // Save information to the local storage
+    highScores.push({initials: input.value, score: statistics.time});
     
+    // Sort array of scores so that the highest score is first
+    highScores.sort((first, second) => {
+        if(first.score > second.score) return -1;
+        if(first.score < second.score) return 1;
+        return 0;
+    });
+
+    localStorage.setItem("highScores", JSON.stringify(highScores));
+
+    quizContentElement.classList.remove("question");
+
     // Take the player to the high score page upon submitting.
     loadHighScores();
 }
@@ -225,6 +286,13 @@ function beginQuiz() {
     nextQuestion();
 }
 
+function loadStorage() {
+    highScores = JSON.parse(localStorage.getItem("highScores"));
+    if(highScores == null) highScores = [];
+}
+
 // Initial event listeners
-highScoreElement.addEventListener('click', loadHighScores);
+highScoreElement.addEventListener('click', loadHighScores, false);
 quizStartButtonElement.addEventListener('click', beginQuiz, false);
+
+loadStorage();

@@ -12,7 +12,25 @@ body {
     color: var(--default-text-color);
 }
 
+/* Button formatting */
 
+.button {
+    font-size: 30px;
+    border: none;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px;
+    font-weight: bolder;
+    background-color: var(--accent-text-color);
+    color: var(--page-background);
+}
+
+.button:hover {
+    border: var(--accent-text-color) solid thin;
+    padding: 4px;
+    background-color: var(--secondary-background);
+    color: var(--accent-text-color);
+}
 
 /** Header **/
 .flex-spacer {
@@ -24,22 +42,6 @@ body {
 }
 
 /* High-Score Button */
-.high-score {
-    text-decoration: none;
-}
-
-.high-score nav {
-    padding: 10px;
-    border: var(--accent-text-color) solid thin;
-    color: var(--accent-text-color);
-    font-size: 30px;
-    text-align: center;
-    width: 200px;
-}
-
-.high-score nav:hover {
-    background-color: var(--secondary-background);
-}
 
 /* Timer Display */
 .timer {
@@ -104,6 +106,13 @@ body {
     text-align: center;
 }
 
+.quiz .content ol {
+    
+}
+.quiz .content ol li {
+    
+}
+
 /* Button List Formatting */
 
 .quiz .buttons {
@@ -118,23 +127,6 @@ body {
     padding: 0px;
 }
 
-.quiz .button {
-    font-size: 30px;
-    border: none;
-    border-radius: 10px;
-    margin: 10px;
-    padding: 5px;
-    font-weight: bolder;
-    background-color: var(--accent-text-color);
-    color: var(--page-background);
-}
-
-.quiz .button:hover {
-    border: var(--accent-text-color) solid thin;
-    padding: 4px;
-    background-color: var(--secondary-background);
-    color: var(--accent-text-color);
-}
 
 .quiz form {
     display: flex;
